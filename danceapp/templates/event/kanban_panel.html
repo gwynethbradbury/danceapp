@@ -1,0 +1,19 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{ title }}<span class="glyphicon glyphicon-{{ icon }}"></span></h3>
+    </div>
+    <div class="panel-body">
+        <div class="list-group">
+            {% for event in events[status]|sort(attribute='date') %}
+                <a href="{{ url_for('event', event_id=event.id) }}" class="list-group-item ">
+{#                <a href="{{ url_for('event', event_id=event.id) }}" class="list-group-item {{ event.storyline.tag.style() }}">#}
+                    <h4 class="list-group-item-heading">{{ event.title }} {{ event.event_occurs_percent }}</h4>
+                    <p class="list-group-item-text">{{ event.description }}</p>
+                    <br/>
+{#                    <p>{% for c in event.cast %}<span class="color-{{ c.initials }}"> <i>{{ c.initials }}</i> </span>  {% endfor %}</p>#}
+                    <p>{% for c in event.cast %}<div class="color-{{ c.initials }}" style="border-radius: 50%;width: 25px;height: 25px;background-color: #c7ddef;text-align: center; padding-top: 5px; display: inline-block">{{ c.initials }}</div>  {% endfor %}</p>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>

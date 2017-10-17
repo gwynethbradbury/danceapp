@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container">
+    <div class="page-header">
+        <h1>Venues</h1>
+    </div>
+
+    <div class="btn-group event-control" role="group">
+        <a href="{{ url_for('new_venue') }}" class="btn btn-link new-storyline"><span class="glyphicon glyphicon-plus"></span><span>New Venue</span></a>
+        <a href="{{ url_for('new_tag') }}" class="btn btn-link new-tag"><span class="glyphicon glyphicon-plus"></span><span>New Tag</span></a>
+    </div>
+    <div class="list-group">
+        {% for venue in venues %}
+            <a href="{{ url_for("events", venue_id=venue.id) }}" class="list-group-item ">
+{#            <a href="{{ url_for("events", venue_id=venue.id) }}" class="list-group-item {{ venue.tag.style() }}">#}
+                <div class="row">
+                    <div class="col-sm-11">
+                        <h4 class="list-group-item-header">{{ venue.name }}</h4>
+{#                        <p class="list-group-item-text">{{ storyline.description }}</p>#}
+                        <div class="storyline-item-additional-content">
+                            {{ venue | html_dispatch("storyline_list_item_additional_content") }}
+                        </div>
+                    </div>
+{#                    <div class="col-sm-1">#}
+{#                        <span class="badge badge-big badge-blue">{{ venue.events.count() }}</span>#}
+{#                    </div>#}
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container">
+    <div class="page-header">
+        <h1>{{ event.title }}</h1>
+    </div>
+
+    <div class="row">
+
+        <div class="col-sm-9">
+
+
+            <form method="POST">
+                <div class="form-group">
+                    <textarea name="description" class="form-control" rows="3" placeholder="Describe at will">{{ event.description }}</textarea>
+                </div>
+{##}
+{#                <div class="form-group">#}
+{#                    <select class="form-control" name="storyline_id">#}
+        {#                <option value="-1">Select a storyline</option>#}
+{#                        {% for storyline in storylines %}#}
+{#                            <option value="{{ storyline.id }}" {% if storyline.id==event.storyline_id %}selected="true"{% endif %} {{ storyline.id | is_selected }}>{{ storyline.title }}</option>#}
+{#                        {% endfor %}#}
+{#                    </select>#}
+{#                </div>#}
+{##}
+{#                <div class="form-group">#}
+{#                    <input name="occurs_percent" type="number" class="form-control" placeholder="When does this happen?" value="{{ event.event_occurs_percent }}">#}
+{#                </div>#}
+{##}
+                <button type="submit" class="btn btn-primary">Save!</button>
+            </form>
+
+            <br/>
+
+            <p class="lead">
+                <i>Promoter{% if event.promoters|length>1 %}s{% endif %}:
+                    {% for c in event.promoters %}<a href="{{ url_for("events", promoter_id=c.id) }}" class="color-{{ c.initials }}">{{ c.name }}</a> {% endfor %}
+                </i>
+            </p>
+        </div>
+        <div class="col-sm-3 event-control">
+{#            <p>Assign event:</p>#}
+{#            <div class="btn-group btn-group-justified" role="group">#}
+{#                {% for c in castmembers %}#}
+{#                    <a href="{{ url_for('set_castmember', event_id=event.id, cast_id=c.id) }}" class="btn btn-{{ loop.index0 % 6  }}">{{ c.initials }}</a>#}
+{#                {% endfor %}#}
+{#            </div>#}
+{#            <div class="btn-group btn-group-justified" role="group">#}
+{#                <a href="{{ url_for('set_castmember', event_id=event.id, cast_id=-1) }}" class="btn btn-link">#}
+{#                    <span class="glyphicon glyphicon-trash"></span>#}
+{#                    Unassign</a>#}
+{#            </div>#}
+{#        #}
+{#        #}
+            <p>Set Status:</p>
+            <div class="btn-group btn-group-vertical" role="group">
+                <a href="{{ url_for('set_status', event_id=event.id, status='one_off') }}" class="btn btn-warning">One Off</a>
+                <a href="{{ url_for('set_status', event_id=event.id, status='repeat_reg') }}" class="btn btn-primary">Regularly repeating</a>
+                <a href="{{ url_for('set_status', event_id=event.id, status='repeat_strange') }}" class="btn btn-success">Irregular</a>
+{#            </div>#}
+{#            <div class="btn-group btn-group-vertical" role="group">#}
+                <a href="{{ url_for('delete_event', event_id=event.id) }}" id="delete-event" class="btn btn-link"><span class="glyphicon glyphicon-trash"></span>Remove</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

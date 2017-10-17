@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<div class="container">
+    <div class="page-header">
+        <h1>Sign up or log in</h1>
+    </div>
+
+    <ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#menu0">Register</a></li>
+  <li><a data-toggle="tab" href="#menu1">Log In</a></li>
+</ul>
+
+<div class="tab-content">
+  <div id="menu0" class="tab-pane fade in active">
+{#    <h3>Sign Up</h3>#}<br/>
+    <form action="{{ url_for('signup') }}" class=".form-horizontal" method="POST">
+        <div class="form-group">
+            {{ form.username.label }}: {{ form.username }}<br>
+        </div>
+        <div class="form-group">
+            {{ form.password.label }}: {{ form.password }}<br>
+        </div>
+        <div class="form-group">
+            {{ form.repeatpassword.label }}: {{ form.repeatpassword }}<br>
+        </div>
+        {{ form.csrf_token }}
+        <button type="submit" class="btn btn-default">Go</button>
+    </form>
+  </div>
+  <div id="menu1" class="tab-pane fade">
+    {#    <h3>Log In</h3>#}<br/>
+    <form action="{{ url_for('signin') }}" class=".form-horizontal" method="POST">
+        <div class="form-group">
+        {{ form.username.label }}: {{ form.username }}<br>
+        </div>
+        <div class="form-group">
+        {{ form.password.label }}: {{ form.password }}<br>
+        </div>
+        {{ form.csrf_token }}
+        <button type="submit" class="btn btn-default">Go</button>
+    </form>
+  </div>
+
+</div>
+
+
+
+
+
+
+
+</div>
+{% endblock %}

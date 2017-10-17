@@ -1,0 +1,58 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{ title }}<span class="glyphicon glyphicon-{{ icon }}"></span></h3>
+    </div>
+    <div class="panel-body">
+        <div class="list-group">
+            <table>
+            {% if castmember.events|length==0 %}
+                <tr >
+                <td class="timeline_vertline" style="padding-top: 15px; vertical-align: top; text-align: left"><span>
+                    <a href="#" class="list-group-item  {{ castmember.style() }}" style="width:300px;">
+                    <h4 class="list-group-item-heading">No events found for this character</h4>
+                    <p class="color-{{ castmember.initials }}"><i>{{ castmember.initials }}</i></p>
+                </a href="#">
+                </span>
+                </td>
+                </tr>
+            {% endif %}
+            {% for event in castmember.events|sort(attribute='event_occurs_percent') %}
+                <tr >
+                <td class="timeline_vertline" style="padding-top: 15px; vertical-align: top; text-align: left"><span>
+                    <a href="{{ url_for('event', event_id=event.id) }}" class="list-group-item  {{ event.cast[0].style() }}" style="width:300px;">
+                    <h5>Chapter: {{ event.event_occurs_percent|round(0,'floor')|int }}</h5>
+                    <h4 class="list-group-item-heading">{{ event.title }}</h4>
+                    <p class="list-group-item-text">{{ event.description[:500] }}{% if event.description|length>500 %}...{% endif %}</p>
+                    <br/>
+
+{#                    <p>{% for c in event.cast %}<span class="color-{{ c.initials }}"> <i>{{ c.initials }}</i> </span>  {% endfor %}</p>#}
+                    <p>{% for c in event.cast %}<div class="color-{{ c.initials }}" style="border-radius: 50%;width: 25px;height: 25px;background-color: #c7ddef;text-align: center; padding-top: 5px; display: inline-block">{{ c.initials }}</div>  {% endfor %}</p>
+
+                </a>
+                </span>
+                </td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+
+
+{#<div class="panel panel-default">#}
+{#    <div class="panel-heading">#}
+{#        <h3 class="panel-title">{{ title }}<span class="glyphicon glyphicon-{{ icon }}"></span></h3>#}
+{#    </div>#}
+{#    <div class="panel-body">#}
+{#        <div class="list-group">#}
+{#            {% for event in events[status] %}#}
+{#                <a href="{{ url_for('event', event_id=event.id) }}" class="list-group-item {{ event.storyline.tag.style() }}">#}
+{#                    <h4 class="list-group-item-heading">{{ event.title }}</h4>#}
+{#                    <p class="list-group-item-text">{{ event.description }}</p>#}
+{#                    <p class="color-{{ event.castmember.initials }}"><i>{{ event.castmember.initials }}</i></p>#}
+{#                    <p class="color-{{ event.castmember.initials }}"><i>{{ event.castmember.initials }}</i></p>#}
+{#                </a>#}
+{#            {% endfor %}#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}

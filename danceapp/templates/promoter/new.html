@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container">
+    <div class="page-header">
+        <h1>New Promoter</h1>
+    </div>
+
+
+{#    name = db.Column(db.String(30), unique=True)#}
+{#    initials = db.Column(db.String(3), unique=True)#}
+{#    color = db.Column(db.Integer)#}
+
+
+    <form method="POST">
+        <div class="form-group">
+            <input name="name" type="text" class="form-control" placeholder="What is the promoter's name?" required>
+        </div>
+
+
+
+        <button type="submit" class="btn btn-primary">Create it!</button>
+    </form>
+
+</div>
+{% endblock %}

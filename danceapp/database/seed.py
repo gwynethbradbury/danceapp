@@ -1,0 +1,115 @@
+from danceapp import db
+from danceapp.models import Event, EventTag, Venue, User, Dance, Tag, Color, Promoter, EventDance, EventPromoter#, Storyline, Event, CastmemberColor, Castmember, User, EventChar
+import datetime
+
+
+def create_dance_types():
+    dt1= Dance('Salsa')
+    tag1 = Tag(name="On1",dance_id= dt1.id, color= Color.GREY)
+    tag2 = Tag(name="On2", dance_id= dt1.id, color= Color.GREY)
+    tag3 = Tag(name="Cuban", dance_id= dt1.id, color= Color.GREY)
+    db.session.add(dt1)
+    db.session.add(tag1)
+    db.session.add(tag2)
+    db.session.add(tag3)
+
+
+    dt2= Dance('Bachata')
+    tag4 = Tag(name="Dominican",dance_id= dt2.id, color= Color.GREY)
+    tag5 = Tag(name="Sensual",dance_id= dt2.id, color= Color.GREY)
+    tag6 = Tag(name="Moderna",dance_id= dt2.id, color= Color.GREY)
+    tag7 = Tag(name="Traditional",dance_id= dt2.id, color= Color.GREY)
+    db.session.add(dt2)
+    db.session.add(tag4)
+    db.session.add(tag5)
+    db.session.add(tag6)
+    db.session.add(tag7)
+
+    dt3= Dance('Kizomba')
+    tag8 = Tag(name="Urban",dance_id= dt3.id, color= Color.GREY)
+    tag9 = Tag(name="Traditional",dance_id= dt3.id, color= Color.GREY)
+    db.session.add(dt3)
+    db.session.add(tag8)
+    db.session.add(tag9)
+
+
+    dt4= Dance('West Coast Swing')
+    db.session.add(dt4)
+
+    db.session.commit()
+
+
+def create_promoters():
+    promo1 = Promoter(name="Unnamed promo")
+    promo2 = Promoter(name="Unnamed promo2")
+    db.session.add(promo1)
+    db.session.add(promo2)
+    db.session.commit()
+
+def create_events():
+    dances=Dance.query.all()
+    promoters=Promoter.query.all()
+    venues=Venue.query.all()
+    c=1
+    for d in dances:
+        for v in venues:
+            for p in promoters:
+
+                event1 = Event(title="First Event",venue_id=v.id,
+                               description= "{}, {}, {}".format(d.name,v.name,p.name),
+                               startat=datetime.datetime.utcnow().time(), endat=datetime.datetime.utcnow().time())
+                ep = EventPromoter(p.id,c)
+                ed = EventDance(d.id, c)
+                c=c+1
+
+                db.session.add(ed)
+                db.session.add(ep)
+                db.session.add(event1)
+    db.session.commit()
+
+def crete_venues():
+    venue0 = Venue(name="Unnamed")
+    venue1 = Venue(name="Unnamed2")
+    db.session.add(venue0)
+    db.session.add(venue1)
+    db.session.commit()
+
+def create_user():
+    u = User()
+    db.session.add(u)
+    db.session.commit()
+
+
+def link_event_tag():
+    t = Tag.query.first()
+    es = Event.query.all()
+    for e in es:
+        te = EventTag(t.id,e.id)
+        db.session.add(te)
+    db.session.commit()
+
+
+
+
+def run_seed():
+    print("Creating default user")
+    create_user()
+    create_defaults()
+
+def create_defaults():
+    print("creating dances and tags")
+    create_dance_types()
+
+    print("creating venues")
+    crete_venues()
+
+    print("creating promoters")
+    create_promoters()
+
+    print("creating events")
+    create_events()
+
+    print("Adding tag to event ...")
+    link_event_tag()
+
+    return

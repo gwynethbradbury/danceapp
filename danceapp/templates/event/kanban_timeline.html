@@ -1,0 +1,26 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{ title }}<span class="glyphicon glyphicon-{{ icon }}"></span></h3>
+    </div>
+    <div class="panel-body" style="overflow: scroll">
+        <div class="list-group">
+            <table><tr class="timeline_line">
+            {% for event in events_by_time|sort(attribute='date') %}
+                <td style="padding-right: 15px; vertical-align: top; text-align: left"><span>
+                    <a href="{{ url_for('event', event_id=event.id) }}" class="list-group-item  " style="width:300px;">
+{#                    <a href="{{ url_for('event', event_id=event.id) }}" class="list-group-item  {{ promoter.style() }}" style="width:300px;">#}
+                    <h5>Date: {{ event.date}}</h5>
+                    <h4 class="list-group-item-heading">{{ event.title }}</h4>
+                    <p class="list-group-item-text">{{ event.description[:500] }}{% if event.description|length>500 %}...{% endif %}</p>
+                    <br/>
+{#                    <p>{% for c in event.cast %}<span class="color-{{ c.initials }}"> <i>{{ c.initials }}</i> </span>  {% endfor %}</p>#}
+                    <p>{% for c in event.cast %}<div class="color-{{ c.initials }}" style="border-radius: 50%;width: 25px;height: 25px;background-color: #c7ddef;text-align: center; padding-top: 5px; display: inline-block">{{ c.initials }}</div>  {% endfor %}</p>
+                </a>
+                </span>
+                </td>
+            {% endfor %}
+            </tr>
+            </table>
+        </div>
+    </div>
+</div>

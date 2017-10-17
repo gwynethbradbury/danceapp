@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel=stylesheet href="{{ url_for('static',filename='css/bootstrap.css') }}">
+        <link rel=stylesheet href="{{ url_for('static',filename='css/application.css') }}">
+        <link rel=stylesheet href="{{ url_for('static',filename='css/timeline.css') }}">
+        <script src="{{ url_for('static', filename='js/jquery-2.2.4.js') }}" defer></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.js') }}" defer></script>
+        <script src="{{ url_for('static', filename='js/application.js') }}" defer></script>
+        <script src="{{ url_for('static', filename='js/timeline.js') }}" defer></script>
+        <title>Events</title>
+
+
+        <style >
+            .color-0{color:#983d00;}
+        .btn-0{color:#ffffff;background-color: #ff7518;border-color:#ff7518}
+        .btn-0.focus{color:#ffffff;background-color:#e45c00;border-color:#983d00}
+        .btn-0:hover{color:#ffffff;background-color:#e45c00;border-color:#da5800}
+        .btn-0[disabled].active,fieldset[disabled] .btn-0.active{background-color:#ff7518;border-color:#ff7518}
+        .btn-0 .badge{color:#ff7518;background-color:#ffffff}
+
+            .color-1{color:#c8974d;}
+        .btn-1{color:#ffffff;background-color: #FFC65D;border-color:#FFC65D}
+        .btn-1.focus{color:#ffffff;background-color: #e7ae58;border-color: #c8974d  }
+        .btn-1:hover{color:#ffffff;background-color:#e7ae58;border-color:#e7ae58}
+        .btn-1[disabled].active,fieldset[disabled] .btn-1.active{background-color:#FFC65D;border-color:#FFC65D}
+        .btn-1 .badge{color:#FFC65D;background-color:#ffffff}
+
+            .color-2{color:#4d9571;}
+        .btn-2{color:#ffffff;background-color: #7BC8A4;border-color:#7BC8A4}
+        .btn-2.focus{color:#ffffff;background-color: #62ab89;border-color: #4d9571}
+        .btn-2:hover{color:#ffffff;background-color:#62ab89;border-color:#62ab89}
+        .btn-2[disabled].active,fieldset[disabled] .btn-2.active{background-color:#7BC8A4;border-color:#7BC8A4}
+        .btn-2 .badge{color:#7BC8A4;background-color:#ffffff}
+
+            .color-3{color:#3e8399;}
+        .btn-3{color:#ffffff;background-color: #4CC3D9;border-color:#4CC3D9}
+        .btn-3.focus{color:#ffffff;background-color: #48a2b8;border-color: #3e8399}
+        .btn-3:hover{color:#ffffff;background-color:#48a2b8;border-color:#48a2b8}
+        .btn-3[disabled].active,fieldset[disabled] .btn-3.active{background-color:#4CC3D9;border-color:#4CC3D9}
+        .btn-3 .badge{color:#4CC3D9;background-color:#ffffff}
+
+            .color-4{color:#634a5e;}
+        .btn-4{color:#ffffff;background-color: #93648D;border-color:#93648D}
+        .btn-4.focus{color:#ffffff;background-color: #82587e;border-color: #634a5e}
+        .btn-4:hover{color:#ffffff;background-color:#82587e;border-color:#82587e}
+        .btn-4[disabled].active,fieldset[disabled] .btn-4.active{background-color:#93648D;border-color:#93648D}
+        .btn-4 .badge{color:#93648D;background-color:#ffffff}
+
+            .color-5{color:#565656;}
+        .btn-5{color:#ffffff;background-color: #8c8c8c;border-color:#8c8c8c}
+        .btn-5.focus{color:#ffffff;background-color: #6e6e6e;border-color: #565656}
+        .btn-5:hover{color:#ffffff;background-color:#6e6e6e;border-color:#6e6e6e}
+        .btn-5[disabled].active,fieldset[disabled] .btn-5.active{background-color:#8c8c8c;border-color:#8c8c8c}
+        .btn-5 .badge{color:#8c8c8c;background-color:#ffffff}
+
+
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                </div>
+                <ul class="nav navbar-nav">
+                    <a class="navbar-brand" href="{{ url_for('index') }}">Home</a>
+                    {% if not current_user.is_authenticated %}
+                        <a class="navbar-brand" href="{{ url_for('signup') }}">Log in / Register</a>
+                    {% else %}
+
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ current_user.username }}
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('profile') }}">Profile</a></li>
+                            <li><a href="{{ url_for('settings') }}">Settings</a></li>
+                            <li><a href="{{ url_for('signout') }}">Log out</a></li>
+                        </ul>
+                    </li>
+
+                    {% endif %}
+                    <li class="{{ url_for('venues') | is_current_page }}">
+                        <a href="{{ url_for('venues') }}">Venues</a>
+                    </li>
+                    <li class="{{ url_for('events') | is_current_page }}">
+                        <a href="{{ url_for('events') }}">Events</a>
+                    </li>
+                    <li class="{{ url_for('promoters') | is_current_page }}">
+                        <a href="{{ url_for('promoters') }}">Promoters</a>
+                    </li>
+                    <li class="{{ url_for('dances') | is_current_page }}">
+                        <a href="{{ url_for('dances') }}">Dances</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        {% block body %}{% endblock %}
+    </body>
+</html>

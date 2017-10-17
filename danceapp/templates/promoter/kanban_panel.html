@@ -1,0 +1,17 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{ title }}<span class="glyphicon glyphicon-{{ icon }}"></span></h3>
+    </div>
+    <div class="panel-body">
+        <div class="list-group">
+            {% for event in events[status] %}
+                <a href="{{ url_for('event', event_id=event.id) }}" class="list-group-item {{ event.storyline.tag.style() }}">
+                    <h4 class="list-group-item-heading">{{ event.title }}</h4>
+                    <p class="list-group-item-text">{{ event.description }}</p>
+                    <p class="color-{{ event.castmember.initials }}"><i>{{ event.castmember.initials }}</i></p>
+                    <p class="color-{{ event.castmember.initials }}"><i>{{ event.castmember.initials }}</i></p>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>

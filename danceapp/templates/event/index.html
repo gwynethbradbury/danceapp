@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container">
+    <div class="page-header">
+        <h1>Events<small class="pull-right">
+            {% if venue %}Venue: {{ venue.name }}
+            {% elif promoter %}Promoter: {{ promoter.name }}
+            {% else %}All Events
+            {% endif %}
+        </small></h1>
+    </div>
+
+
+    {% if storyline %}
+        <div class="well well-lg">
+            <h4>{{ storyline.title }}, <small>{{ storyline.description }}</small></h4>
+            <div class="btn-group event-control" role="group">
+                <a href="{{ url_for('new_event', storyline_id=storyline.id) }}" class="btn btn-link new-item"><span class="glyphicon glyphicon-plus"></span>New Event</a>
+                <a href="{{ url_for('delete_storyline', storyline_id=storyline.id) }}" id="delete-storyline" class="btn btn-link"><span class="glyphicon glyphicon-trash"></span>Remove</a>
+            </div>
+        </div>
+    {% elif promoter %}
+
+
+        <div class=" well well-lg" >
+{#        <div class="{{ promoter.bgcol() }} well well-lg" >#}
+            <h4>{{ promoter.name }}</h4>
+            <div class="btn-group event-control" role="group">
+                <a href="{{ url_for('new_event', promoter=promoter.id) }}" class="btn btn-link new-item"><span class="glyphicon glyphicon-plus"></span>New Event</a>
+{#                <a href="{{ url_for('delete_castmember', castmember_id=castmember.id) }}" id="delete-castmember" class="btn btn-link"><span class="glyphicon glyphicon-trash"></span>Remove</a>#}
+            </div>
+        </div>
+        <div class="row kanban">
+            <div class="col-lg-12">
+                {% with title="Timeline", icon="leaf" %}
+                    {% include "event/kanban_timeline.html" %}
+                {% endwith %}
+            </div>
+        </div>
+
+    {% else %}
+        <a href="{{ url_for('new_event') }}" class="btn btn-link new-item">
+            <span class="glyphicon glyphicon-plus"></span>New Event
+        </a>
+    {% endif %}
+
+    <div class="row kanban">
+        <div class="col-sm-4">
+            {% with title="One off", status="ONE_OFF", icon="fire" %}
+                {% include "event/kanban_panel.html" %}
+            {% endwith %}
+        </div>
+        <div class="col-sm-4">
+            {% with title="Regular", status="REPEAT_REG", icon="send" %}
+                {% include "event/kanban_panel.html" %}
+            {% endwith %}
+        </div>
+        <div class="col-sm-4">
+            {% with title="Irregularly repeating events", status="REPEAT_STRANGE", icon="sunglasses" %}
+                {% include "event/kanban_panel.html" %}
+            {% endwith %}
+        </div>
+    </div>
+</div>
+{% endblock %}
