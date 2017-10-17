@@ -6,7 +6,11 @@
     </div>
 
     <div class="btn-group event-control" role="group">
+
+        {% if current_user.is_authenticated %}{% if current_user.is_admin %}
         <a href="{{ url_for('new_promoter') }}" class="btn btn-link new-storyline"><span class="glyphicon glyphicon-plus"></span><span>New promoter</span></a>
+        {% endif %}
+        {% endif %}
     </div>
     <div class="list-group">
         {% for promoter in promoters %}

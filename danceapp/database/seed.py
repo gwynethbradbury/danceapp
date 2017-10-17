@@ -50,7 +50,6 @@ def create_events():
     dances=Dance.query.all()
     promoters=Promoter.query.all()
     venues=Venue.query.all()
-    c=1
     for d in dances:
         for v in venues:
             for p in promoters:
@@ -58,13 +57,14 @@ def create_events():
                 event1 = Event(title="First Event",venue_id=v.id,
                                description= "{}, {}, {}".format(d.name,v.name,p.name),
                                startat=datetime.datetime.utcnow().time(), endat=datetime.datetime.utcnow().time())
+                db.session.add(event1)
+                db.session.commit()
+                c=event1.id
                 ep = EventPromoter(p.id,c)
                 ed = EventDance(d.id, c)
-                c=c+1
 
                 db.session.add(ed)
                 db.session.add(ep)
-                db.session.add(event1)
     db.session.commit()
 
 def crete_venues():
@@ -75,7 +75,11 @@ def crete_venues():
     db.session.commit()
 
 def create_user():
-    u = User()
+    u = User(username="default", password="password", email="default", is_admin=False,is_promoter=False)
+    db.session.add(u)
+    u = User(username="promoter", password="password", email="promoter", is_admin=False,is_promoter=True)
+    db.session.add(u)
+    u = User(username="admin", password="password", email="admin", is_admin=True,is_promoter=False)
     db.session.add(u)
     db.session.commit()
 

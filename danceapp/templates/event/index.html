@@ -11,12 +11,15 @@
     </div>
 
 
-    {% if storyline %}
+    {% if venue %}
         <div class="well well-lg">
-            <h4>{{ storyline.title }}, <small>{{ storyline.description }}</small></h4>
+            <h4>{{ venue.name }}</h4>
             <div class="btn-group event-control" role="group">
-                <a href="{{ url_for('new_event', storyline_id=storyline.id) }}" class="btn btn-link new-item"><span class="glyphicon glyphicon-plus"></span>New Event</a>
-                <a href="{{ url_for('delete_storyline', storyline_id=storyline.id) }}" id="delete-storyline" class="btn btn-link"><span class="glyphicon glyphicon-trash"></span>Remove</a>
+
+        {% if current_user.is_authenticated %}{% if current_user.is_admin %}
+                <a href="{{ url_for('delete_venue', venue_id=venue.id) }}" id="delete-venue" class="btn btn-link"><span class="glyphicon glyphicon-trash"></span>Remove</a>
+                {% endif %}
+                {% endif %}
             </div>
         </div>
     {% elif promoter %}
@@ -26,8 +29,12 @@
 {#        <div class="{{ promoter.bgcol() }} well well-lg" >#}
             <h4>{{ promoter.name }}</h4>
             <div class="btn-group event-control" role="group">
+
+        {% if current_user.is_authenticated %}{% if current_user.is_admin or current_user.is_promoter %}
                 <a href="{{ url_for('new_event', promoter=promoter.id) }}" class="btn btn-link new-item"><span class="glyphicon glyphicon-plus"></span>New Event</a>
-{#                <a href="{{ url_for('delete_castmember', castmember_id=castmember.id) }}" id="delete-castmember" class="btn btn-link"><span class="glyphicon glyphicon-trash"></span>Remove</a>#}
+{#                <a href="{{ url_for('delete_promoter', promoter_id=castmember.id) }}" id="delete-promoter" class="btn btn-link"><span class="glyphicon glyphicon-trash"></span>Remove</a>#}
+                {% endif %}
+                {% endif %}
             </div>
         </div>
         <div class="row kanban">
@@ -39,9 +46,11 @@
         </div>
 
     {% else %}
-        <a href="{{ url_for('new_event') }}" class="btn btn-link new-item">
-            <span class="glyphicon glyphicon-plus"></span>New Event
-        </a>
+
+        {% if current_user.is_authenticated %}{% if current_user.is_admin or current_user.is_promoter %}
+        <a href="{{ url_for('new_event') }}" class="btn btn-link new-item"><span class="glyphicon glyphicon-plus"></span>New Event</a>
+        {% endif %}
+        {% endif %}
     {% endif %}
 
     <div class="row kanban">
