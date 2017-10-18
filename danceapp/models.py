@@ -93,6 +93,14 @@ class Dance(db.Model):
     def __init__(self,name):
         self.name=name
 
+class UserPromoter(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    promo_id = db.Column(db.Integer, db.ForeignKey('promoter.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __init__(self,promo_id,user_id):
+        self.promo_id = promo_id
+        self.user_id = user_id
 
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -256,13 +264,21 @@ class User(db.Model):
     email = db.Column('email', db.String(50), unique=True, index=True)
     registered_on = db.Column('registered_on', db.DateTime)
     active = db.Column('active', db.Boolean)
+    is_promoter = db.Column('is_promoter',db.Boolean, default=False)
+    is_admin = db.Column('is_admin',db.Boolean, default=False)
+    promotesfor = relationship("Promoter",
+                        secondary=UserPromoter.__table__,
+                        backref="promoterusers")
 
-    def __init__(self, username="default", password="password", email="default"):
+
+    def __init__(self, username="default", password="password", email="default", is_admin=False,is_promoter=False):
         self.username = username
         self.password = password
         self.email = email
         self.registered_on = datetime.datetime.utcnow()
         self.active = True
+        self.is_admin=is_admin
+        self.is_promoter=is_promoter
 
 
     @hybrid_property
@@ -291,6 +307,10 @@ class User(db.Model):
         """False, as anonymous users aren't supported."""
         return False
 
+    def is_admin_user(self):
+        return self.is_admin
+    def is_promoter_user(self):
+        return self.is_promoter
 
     def __repr__(self):
         return '<User %r>' % (self.username)

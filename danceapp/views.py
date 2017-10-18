@@ -21,15 +21,22 @@ def venues():
 
 @app.route('/venues/new', methods=['POST', 'GET'])
 def new_venue():
-    if request.method == 'POST':
-        venue = Venue(name=request.form.get('name'))
-        db.session.add(venue)
-        db.session.commit()
-        venue_created.send(venue)
-        return redirect(url_for('venues'))
-    else:
-        tags = Tag.query.all()
-        return render_template('venue/new.html', tags=tags)
+    if current_user.is_authenticated:
+
+        cu = User.query.get_or_404(current_user.id)
+        if cu.is_admin or cu.is_promoter:
+            if request.method == 'POST':
+                venue = Venue(name=request.form.get('name'))
+                db.session.add(venue)
+                db.session.commit()
+                venue_created.send(venue)
+                return redirect(url_for('venues'))
+            else:
+                return render_template('venue/new.html', tags=tags)
+        else:
+            flash("not authorised to create new venue", category="error")
+    venues = Venue.query.all()
+    return render_template('venue/index.html', venues=venues)
 
 @app.route('/events')
 def events():
@@ -76,24 +83,35 @@ def promoters():
 
 @app.route('/promoters/new', methods=['POST', 'GET'])
 def new_promoter():
-    # id = db.Column(db.Integer, primary_key=True)
-    # name = db.Column(db.String(30), unique=True)
-    # initials = db.Column(db.String(3), unique=True)
-    # color = db.Column(db.Integer)
-    # events = db.relationship('Event', backref='castmember', lazy='dynamic')
-    if request.method == 'POST':
+    if current_user.is_authenticated:
 
-        promoter = Promoter( name=request.form.get('name'))
-        db.session.add(promoter)
-        db.session.commit()
-        promoter_created.send(promoter)
-        return redirect('/promoters')
-        # return redirect('/castmembers?castmember_id={}'.format(request.form.get('castmember_id')))
+        cu = User.query.get_or_404(current_user.id)
+        if cu.is_admin:
+            # id = db.Column(db.Integer, primary_key=True)
+            # name = db.Column(db.String(30), unique=True)
+            # initials = db.Column(db.String(3), unique=True)
+            # color = db.Column(db.Integer)
+            # events = db.relationship('Event', backref='castmember', lazy='dynamic')
+            if request.method == 'POST':
+
+                promoter = Promoter( name=request.form.get('name'))
+                db.session.add(promoter)
+                db.session.commit()
+                promoter_created.send(promoter)
+                return redirect('/promoters')
+                # return redirect('/castmembers?castmember_id={}'.format(request.form.get('castmember_id')))
+            else:
+                venues = Venue.query.all()
+                promoters = Promoter.query.all()
+                colors = { color.name: color.value for color in TagColor }
+                return render_template('promoter/new.html', venues=venues, promoters = promoters, colors=colors)
+        else:
+            flash("not authorised to create new promoter", category="error")
     else:
-        venues = Venue.query.all()
-        promoters = Promoter.query.all()
-        colors = { color.name: color.value for color in TagColor }
-        return render_template('promoter/new.html', venues=venues, promoters = promoters, colors=colors)
+        events = Event.query.all()
+        promoters=Promoter.query.all()
+        events.sort(key=lambda x: x.date)
+        return render_template('promoter/index.html', promoters=promoters, events=events)
 
 @app.route('/events/new', methods=['POST', 'GET'])
 def new_event():
@@ -138,14 +156,17 @@ def event(event_id):
 
 @app.route('/events/<int:event_id>/set_status/<status>')
 def set_status(event_id, status):
-    event = Event.query.get_or_404(event_id)
-    try:
-        event.status = Status[status.upper()].value
-    except KeyError:
-        abort(400)
+    if current_user.is_authenticated():
+        cu = User.query.get_or_404(current_user.id)
+        if cu.is_admin or cu.is_promoter:
+            event = Event.query.get_or_404(event_id)
+            try:
+                event.status = Status[status.upper()].value
+            except KeyError:
+                abort(400)
 
-    db.session.add(event)
-    db.session.commit()
+            db.session.add(event)
+            db.session.commit()
     return redirect(url_for('events'))
 
 # region SET OWNER

@@ -1,5 +1,12 @@
 {% extends "base.html" %}
+
+{% import 'layout.html' as layout with context -%}
+
 {% block body %}
+    {% block messages %}
+    {{ layout.messages() }}
+    {% endblock %}
+
 
 <div class="container">
     <div class="jumbotron">

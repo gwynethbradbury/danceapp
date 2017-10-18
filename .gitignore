@@ -1,1 +1,5 @@
 dbconfig.py
+*.pyc
+
+.idea
+.idea/*
