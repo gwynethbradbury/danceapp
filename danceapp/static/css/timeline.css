@@ -203,7 +203,7 @@ span.bg {
 }
 .timeline_line span {
   /* to hide the lines from behind the text, you have to set the background color the same as the container */
-  background: #fff;
+  /*background: #fff;*/
   padding: 0 5px;
 }
 

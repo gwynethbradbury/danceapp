@@ -1,5 +1,62 @@
 {% extends "base.html" %}
 {% block body %}
+
+ <script language="JavaScript">
+            var showwholetable = false;
+            function toggleVisibility(eventsender, idOfObjectToToggle1, idOfObjectToToggle2){
+                var myNewState = "collapse";
+                var myInverseNewState = "visible";
+                showwholetable = false;
+                displ="none"
+                invdispl="inline"
+
+                if (eventsender.checked === true){
+                    myNewState = "visible";
+                    showwholetable=true;
+                    displ="inline"
+
+
+                    myInverseNewState="collapse"
+                    invdispl="none"
+                }
+
+                document.getElementById(idOfObjectToToggle1).style.visibility = myNewState;
+                document.getElementById(idOfObjectToToggle1).style.display = displ;
+
+                document.getElementById(idOfObjectToToggle2).style.visibility = myInverseNewState;
+                document.getElementById(idOfObjectToToggle2).style.display = invdispl;
+                toggleColumnHeaders(eventsender,myNewState)
+            }
+
+            function toggleColumnHeaders(eventsender){
+
+                for(i=0;i<document.getElementById("tablename").options.length;i++){
+                    idd = "_"+document.getElementById("tablename").options[i].text;
+
+                    try {
+                        document.getElementById(idd).style.visibility = "hidden";
+
+                         document.getElementById(idd).style.display="none";
+                    }
+                    catch(err) {
+{#                        document.getElementById("demo").innerHTML = err.message;#}
+                    }
+                }
+
+                if(showwholetable){
+                    idOfObjectToToggle = "_"+document.getElementById("tablename").options[document.getElementById("tablename").selectedIndex].text;
+                    document.getElementById(idOfObjectToToggle).style.visibility = "visible";
+                    document.getElementById(idOfObjectToToggle).style.display="inline";
+                }
+
+
+                document.getElementById("selectedtablename").innerHTML = "Columns for table: "+document.getElementById("tablename").options[document.getElementById("tablename").selectedIndex].text
+
+            }
+
+        </script>
+
+
 <div class="container">
     <div class="page-header">
         <h1>New Event</h1>
@@ -30,6 +87,37 @@
                 {% endfor %}
             </select>
         </div>
+
+        <div class="form-group" >
+            <input type="date" name="nextdate"> from:
+            <input type="time" name="starttime"> to:
+            <input type="time" name="endtime">
+        </div>
+
+        <div class="form-group">
+            <input type="checkbox" name="repeatsweekly" value="Yes" checked onchange="JavaScript:toggleVisibility(this,'myData','myData2');"> Repeats weekly<br>
+        </div>
+
+{#        if yes#}
+        <div class="form-group" id="myData" style="display: inline">
+            <select class="form-control" name="day_id">
+{#                <option value="-1">Select day</option>#}
+                <option value="MO">Monday</option>
+                <option value="TU">Tuesday</option>
+                <option value="WE">Wednesday</option>
+                <option value="TH">Thursday</option>
+                <option value="FR">Friday</option>
+                <option value="SA">Saturday</option>
+                <option value="SU">Sunday</option>
+            </select>
+        </div>
+{#        if no#}
+        <div class="form-group" id="myData2" style="display: inline; visibility: collapse">
+            <input type="checkbox" name="repeatreminder" value="Yes" checked/> Do you wish to be reminded to set the date for the next event once this one has happened?
+        </div>
+<br/>
+<br/>
+
 
 
         <button type="submit" class="btn btn-primary">Create it!</button>
