@@ -15,13 +15,12 @@
         <div class="well well-lg">
             <h4>{{ venue.name }}</h4>
             <div class="btn-group event-control" role="group">
-
-        {% if current_user.is_authenticated %}{% if current_user.is_admin %}
-                <a href="{{ url_for('delete_venue', venue_id=venue.id) }}" id="delete-venue" class="btn btn-link"><span class="glyphicon glyphicon-trash"></span>Remove</a>
-                {% endif %}
-                {% endif %}
+                {% if current_user.is_authenticated %}{% if current_user.is_admin %}
+                    <a href="{{ url_for('delete_venue', venue_id=venue.id) }}" id="delete-venue" class="btn btn-link"><span class="glyphicon glyphicon-trash"></span>Remove</a>
+                {% endif %}{% endif %}
             </div>
         </div>
+
     {% elif promoter %}
 
 
@@ -30,18 +29,11 @@
             <h4>{{ promoter.name }}</h4>
             <div class="btn-group event-control" role="group">
 
-        {% if current_user.is_authenticated %}{% if current_user.is_admin or current_user.is_promoter %}
+                {% if current_user.is_authenticated %}{% if current_user.is_admin or current_user.is_promoter %}
                 <a href="{{ url_for('new_event', promoter=promoter.id) }}" class="btn btn-link new-item"><span class="glyphicon glyphicon-plus"></span>New Event</a>
 {#                <a href="{{ url_for('delete_promoter', promoter_id=castmember.id) }}" id="delete-promoter" class="btn btn-link"><span class="glyphicon glyphicon-trash"></span>Remove</a>#}
                 {% endif %}
                 {% endif %}
-            </div>
-        </div>
-        <div class="row kanban">
-            <div class="col-lg-12">
-                {% with title="Timeline", icon="leaf" %}
-                    {% include "event/kanban_timeline.html" %}
-                {% endwith %}
             </div>
         </div>
 
@@ -52,6 +44,15 @@
         {% endif %}
         {% endif %}
     {% endif %}
+
+
+        <div class="row kanban">
+            <div class="col-lg-12">
+                {% with title="Coming up...", icon="leaf" %}
+                    {% include "event/kanban_timeline.html" %}
+                {% endwith %}
+            </div>
+        </div>
 
     <div class="row kanban">
         <div class="col-sm-4">

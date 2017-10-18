@@ -119,7 +119,17 @@ def new_event():
     if request.method == 'POST':
         event = Event(title=request.form.get('title'),
                     description=request.form.get('description'),
-                    venue_id=request.form.get('venue_id'),startat=datetime.datetime.utcnow().time(),endat=datetime.datetime.utcnow().time())
+                    venue_id=request.form.get('venue_id'),
+                      date=request.form.get('nextdate'),
+                      startat=request.form.get('starttime'),endat=request.form.get('endtime'))
+        if request.form.get('repeatsweekly')=="Yes":
+            event.status=2
+            event.day = Day[request.form.get('day_id')].value
+        elif request.form.get('repeatreminder'):
+            event.status=3
+        else:
+            event.status=1
+
         db.session.add(event)
         db.session.commit()
         ep = EventPromoter(request.form.get('promoter_id'),event.id)
@@ -145,11 +155,22 @@ def event(event_id):
         try:
             event.description = request.form.get('description')
             event.venue_id = request.form.get('storyline_id')
+            event.date=request.form.get('nextdate')
+            event.startat=request.form.get('starttime')
+            event.endat=request.form.get('endtime')
+            if request.form.get('repeatsweekly') == "Yes":
+                event.status = 2
+                event.day = Day[request.form.get('day_id')].value
+            elif request.form.get('repeatreminder'):
+                event.status = 3
+            else:
+                event.status = 1
+
+            db.session.add(event)
+            db.session.commit()
         except KeyError:
             abort(400)
 
-        db.session.add(event)
-        db.session.commit()
         flash("Saved",category='message')
 
     return render_template('event/event.html', event=event, promoters=promoters, venue=venue)

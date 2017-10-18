@@ -1,5 +1,62 @@
 {% extends "base.html" %}
 {% block body %}
+
+     <script language="JavaScript">
+            var showwholetable = false;
+            function toggleVisibility(eventsender, idOfObjectToToggle1, idOfObjectToToggle2){
+                var myNewState = "collapse";
+                var myInverseNewState = "visible";
+                showwholetable = false;
+                displ="none"
+                invdispl="inline"
+
+                if (eventsender.checked === true){
+                    myNewState = "visible";
+                    showwholetable=true;
+                    displ="inline"
+
+
+                    myInverseNewState="collapse"
+                    indispl="none"
+                }
+
+                document.getElementById(idOfObjectToToggle1).style.visibility = myNewState;
+                document.getElementById(idOfObjectToToggle1).style.display = displ;
+
+                document.getElementById(idOfObjectToToggle2).style.visibility = myInverseNewState;
+                document.getElementById(idOfObjectToToggle2).style.display = invdispl;
+                toggleColumnHeaders(eventsender,myNewState)
+            }
+
+            function toggleColumnHeaders(eventsender){
+
+                for(i=0;i<document.getElementById("tablename").options.length;i++){
+                    idd = "_"+document.getElementById("tablename").options[i].text;
+
+                    try {
+                        document.getElementById(idd).style.visibility = "hidden";
+
+                         document.getElementById(idd).style.display="none";
+                    }
+                    catch(err) {
+{#                        document.getElementById("demo").innerHTML = err.message;#}
+                    }
+                }
+
+                if(showwholetable){
+                    idOfObjectToToggle = "_"+document.getElementById("tablename").options[document.getElementById("tablename").selectedIndex].text;
+                    document.getElementById(idOfObjectToToggle).style.visibility = "visible";
+                    document.getElementById(idOfObjectToToggle).style.display="inline";
+                }
+
+
+                document.getElementById("selectedtablename").innerHTML = "Columns for table: "+document.getElementById("tablename").options[document.getElementById("tablename").selectedIndex].text
+
+            }
+
+        </script>
+
+
 <div class="container">
     <div class="page-header">
         <h1>{{ event.title }}</h1>
@@ -16,18 +73,51 @@
                 <div class="form-group">
                     <textarea name="description" class="form-control" rows="3" placeholder="Describe at will">{{ event.description }}</textarea>
                 </div>
+
+
+                <div class="form-group" >
+                    <input type="date" name="nextdate" value="{{ event.date }}"> from:
+                    <input type="time" name="starttime" value="{{ event.startat }}"> to:
+                    <input type="time" name="endtime" value="{{ event.endat }}">
+                </div>
+
+                <div class="form-group">
+                    <input type="checkbox" name="repeatsweekly" value="Yes" {% if event.status==2 %}checked{% endif %} onchange="JavaScript:toggleVisibility(this,'myData','myData2');"> Repeats weekly<br>
+                </div>
+
+        {#        if yes#}
+                <div class="form-group" id="myData" style="display: {% if event.status==2 %}inline;{% else %} none; visibility:collapse{% endif %}">
+                    <select class="form-control" name="day_id">
+        {#                <option value="-1">Select day</option>#}
+                        <option value="MO" {% if event.day==1 %}selected{% endif %}>Monday</option>
+                        <option value="TU" {% if event.day==2 %}selected{% endif %}>Tuesday</option>
+                        <option value="WE" {% if event.day==3 %}selected{% endif %}>Wednesday</option>
+                        <option value="TH" {% if event.day==4 %}selected{% endif %}>Thursday</option>
+                        <option value="FR" {% if event.day==5 %}selected{% endif %}>Friday</option>
+                        <option value="SA" {% if event.day==6 %}selected{% endif %}>Saturday</option>
+                        <option value="SU" {% if event.day==7 %}selected{% endif %}>Sunday</option>
+                    </select>
+                </div>
+        {#        if no#}
+                <div class="form-group" id="myData2" style="display: {% if event.status==2 %}none; visibility: collapse{% else %}inline{% endif %}">
+                    <input type="checkbox" name="repeatreminder" value="Yes" {% if event.status==3 %}checked{% endif %}/> Do you wish to be reminded to set the date for the next event once this one has happened?
+                </div>
+
+<br/><br/>
+
                 <button type="submit" class="btn btn-primary">Save!</button>
             </form>
             {% else %}
-                {{ event.description }} <br/>
-                {{ event.venue.name }} <br/>
-                {{ event.date }}<br/>
-                {{ event.startat }} - {{ event.endat}}
+                <p>{{ event.description }}</p>
+                <p>{{ event.venue.name }}</p>
+                <p>{{ event.date }}</p>
+                <p>{{ event.startat }} - {{ event.endat }}</p>
             {% endif %}
         {% else %}
-            {{ event.description }} <br/>
-            {{ event.venue.name }} <br/>
-            {{ event.date }}
+            <p>{{ event.description }}</p>
+            <p>{{ event.venue.name }}</p>
+            <p>{{ event.date }}</p>
+            <p>{{ event.startat }} - {{ event.endat }}</p>
         {% endif%}
 
             <br/>
@@ -41,6 +131,9 @@
                 <i>Promoter{% if event.promoters|length>1 %}s{% endif %}:
                     {% for c in event.promoters %}<a href="{{ url_for("events", promoter_id=c.id) }}" class="color-{{ c.initials }}">{{ c.name }}</a> {% endfor %}
                 </i>
+            </p>
+            <p class="lead">
+                    <img src="http://via.placeholder.com/600x840" style="min-width: 300px;"/>
             </p>
         </div>
         <div class="col-sm-3 event-control">
