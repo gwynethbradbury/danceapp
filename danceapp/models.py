@@ -93,6 +93,11 @@ class Dance(db.Model):
     def __init__(self,name):
         self.name=name
 
+    def hastags(self):
+        if self.possibletags.count():
+            return True
+        return False
+
 class UserPromoter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     promo_id = db.Column(db.Integer, db.ForeignKey('promoter.id'))
@@ -144,6 +149,18 @@ class Event(db.Model):
         self.day = day
         self.date = date
         self.status=status
+
+    def getNextDate(self):
+        if self.status==1:
+            return self.date
+        elif self.status==2:
+
+            today = datetime.datetime.today().weekday()+1
+            inc = (self.day - today) %7
+            nextdate = datetime.datetime.utcnow() + datetime.timedelta(days=inc)
+            return nextdate.date()
+        else:
+            return self.date
 
 
 class Promoter(db.Model):

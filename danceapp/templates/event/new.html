@@ -25,34 +25,9 @@
 
                 document.getElementById(idOfObjectToToggle2).style.visibility = myInverseNewState;
                 document.getElementById(idOfObjectToToggle2).style.display = invdispl;
-                toggleColumnHeaders(eventsender,myNewState)
             }
 
-            function toggleColumnHeaders(eventsender){
 
-                for(i=0;i<document.getElementById("tablename").options.length;i++){
-                    idd = "_"+document.getElementById("tablename").options[i].text;
-
-                    try {
-                        document.getElementById(idd).style.visibility = "hidden";
-
-                         document.getElementById(idd).style.display="none";
-                    }
-                    catch(err) {
-{#                        document.getElementById("demo").innerHTML = err.message;#}
-                    }
-                }
-
-                if(showwholetable){
-                    idOfObjectToToggle = "_"+document.getElementById("tablename").options[document.getElementById("tablename").selectedIndex].text;
-                    document.getElementById(idOfObjectToToggle).style.visibility = "visible";
-                    document.getElementById(idOfObjectToToggle).style.display="inline";
-                }
-
-
-                document.getElementById("selectedtablename").innerHTML = "Columns for table: "+document.getElementById("tablename").options[document.getElementById("tablename").selectedIndex].text
-
-            }
 
         </script>
 
@@ -82,7 +57,7 @@
         <div class="form-group">
             <select class="form-control" name="promoter_id">
                 <option value="-1">Select a Promoter</option>
-                {% for promoter in promoters %}
+                {% for promoter in current_user.promotesfor %}
                     <option value="{{ promoter.id }}" {{ promoter.id | is_selected }}>{{ promoter.name }}</option>
                 {% endfor %}
             </select>

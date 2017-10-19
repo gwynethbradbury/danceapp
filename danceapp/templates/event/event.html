@@ -60,6 +60,7 @@
 <div class="container">
     <div class="page-header">
         <h1>{{ event.title }}</h1>
+        {% for d in event.dances %}{{ d.name }} {% endfor %}
     </div>
 
     <div class="row">
@@ -104,6 +105,19 @@
                 </div>
 
 <br/><br/>
+                    <div class="form-group" id="tagging">
+                        {% for d in dances %}
+                            <p>{{ d.name }}:
+                            {% if d.hastags() %}<br/>
+                                {% for g in d.possibletags %}
+                                    <input type="checkbox" name="{{ d.id }}_{{ g.id }}" value="{{ g.id }}" {% if g in event.tags %}checked{% endif %}/> {{ g.name }}
+                                {% endfor %} <br/>
+                            {% else %}
+                                <input type="checkbox" name="{{ d.id }}_" value="genre" {% if d in event.dances %}checked{% endif %}/>
+                            {% endif %}
+                                </p>
+                        {% endfor %}
+                    </div>
 
                 <button type="submit" class="btn btn-primary">Save!</button>
             </form>
@@ -112,14 +126,17 @@
                 <p>{{ event.venue.name }}</p>
                 <p>{{ event.date }}</p>
                 <p>{{ event.startat }} - {{ event.endat }}</p>
+                <p>{% for t in event.tags %}{{ t.name }}{% endfor %}</p>
             {% endif %}
         {% else %}
             <p>{{ event.description }}</p>
             <p>{{ event.venue.name }}</p>
             <p>{{ event.date }}</p>
             <p>{{ event.startat }} - {{ event.endat }}</p>
+            <p>{% for t in event.tags %}{{ t.name }} {% endfor %}</p>
         {% endif%}
 
+        {{ event.getNextDate() }}
             <br/>
 
             <p class="lead">
@@ -155,7 +172,13 @@
                 {% if current_user.is_admin_user() or current_user.is_promoter_user() %}
                     <p>Set Status:</p>
                     <div class="btn-group btn-group-vertical" role="group">
-                        <a href="{{ url_for('set_status', event_id=event.id, status='one_off') }}" class="btn btn-warning">One Off</a>
+                    {% for d in dances %}
+                        <a href="{{ url_for('toggle_genre', event_id=event.id, genre_id=d.id) }}" class="btn btn-warning">{{ d.name }}</a>
+                        {% for g in d.possibletags %}
+                            <a href="{{ url_for('toggle_tag', event_id=event.id, tag_id=g.id) }}" class="btn btn-warning">{{ g.name }}</a>
+                        {% endfor %}
+                    {% endfor %}
+
                         <a href="{{ url_for('set_status', event_id=event.id, status='repeat_reg') }}" class="btn btn-primary">Regularly repeating</a>
                         <a href="{{ url_for('set_status', event_id=event.id, status='repeat_strange') }}" class="btn btn-success">Irregular</a>
         {#            </div>#}
