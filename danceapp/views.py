@@ -59,6 +59,9 @@ def events():
     for event in events:
         status = Status(event.status).name
         events_by_status[status].append(event)
+
+    events.sort(key=lambda x: x.getNextDate())
+
     return render_template('event/index.html', events=events_by_status, events_by_time=events,
                            venue=venue,promoter=promoter)
 
@@ -149,7 +152,7 @@ def event(event_id):
     event = Event.query.get_or_404(event_id)
     promoters = event.promoters
     venue = event.venue
-
+    dances = Dance.query.all()
 
     if request.method == 'POST':
         try:
@@ -166,6 +169,22 @@ def event(event_id):
             else:
                 event.status = 1
 
+            for d in dances:
+                if d.possibletags.count():
+                    for t in d.possibletags:
+                        x=(request.form.get(str(d.id)+'_'+str(t.id)) == str(t.id))
+                        y=( t in event.tags)
+                        if not x==y:
+                            set_tag(event_id,t.id)
+                            set_genre(event_id,t.dance.id)
+                else:
+                    x=(request.form.get(str(d.id)+'_') == 'genre')
+                    y=(d in event.dances)
+                    if not x==y:
+                        set_genre(event_id,d.id)
+
+
+
             db.session.add(event)
             db.session.commit()
         except KeyError:
@@ -173,7 +192,7 @@ def event(event_id):
 
         flash("Saved",category='message')
 
-    return render_template('event/event.html', event=event, promoters=promoters, venue=venue)
+    return render_template('event/event.html', event=event, promoters=promoters, venue=venue, dances=dances)
 
 @app.route('/events/<int:event_id>/set_status/<status>')
 def set_status(event_id, status):
@@ -188,7 +207,60 @@ def set_status(event_id, status):
 
             db.session.add(event)
             db.session.commit()
+    return redirect(url_for('events'))\
+
+@app.route('/events/<int:event_id>/set_genre/<genre_id>')
+def toggle_genre(event_id, genre_id):
+    if current_user.is_authenticated():
+        cu = User.query.get_or_404(current_user.id)
+        if cu.is_admin or cu.is_promoter:
+            try:
+                set_genre(event_id, genre_id)
+            except KeyError:
+                abort(400)
     return redirect(url_for('events'))
+def set_genre(event_id, genre_id):
+    event = Event.query.get_or_404(event_id)
+    dance = Dance.query.get_or_404(genre_id)
+    if dance in event.dances:
+        eventdances_count = EventDance.query.filter_by(event_id=event_id,dance_id=genre_id).count()
+        if eventdances_count>0:
+            EDList = EventDance.query.filter_by(event_id=event_id,dance_id=genre_id).all()
+            for e in EDList:
+                db.session.delete(e)
+    else:
+        ed = EventDance(genre_id,event_id)
+        db.session.add(ed)
+    db.session.commit()
+
+
+@app.route('/events/<int:event_id>/set_tag/<tag_id>')
+def toggle_tag(event_id, tag_id):
+    if current_user.is_authenticated():
+        cu = User.query.get_or_404(current_user.id)
+        if cu.is_admin or cu.is_promoter:
+
+            try:
+                set_tag(event_id,tag_id)
+            except KeyError:
+                abort(400)
+
+    return redirect(url_for('events'))
+def set_tag(event_id, tag_id):
+    event = Event.query.get_or_404(event_id)
+    tag = Tag.query.get_or_404(tag_id)
+    if tag in event.tags:
+        eventtags_count = EventTag.query.filter_by(event_id=event_id, tag_id=tag_id).count()
+        if eventtags_count > 0:
+            ETList = EventTag.query.filter_by(event_id=event_id, tag_id=tag_id).all()
+            for e in ETList:
+                db.session.delete(e)
+    else:
+        et = EventTag(tag_id, event_id)
+        db.session.add(et)
+    db.session.commit()
+
+
 
 # region SET OWNER
 #

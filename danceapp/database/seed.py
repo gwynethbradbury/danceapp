@@ -1,34 +1,37 @@
 from danceapp import db
-from danceapp.models import Event, EventTag, Venue, User, Dance, Tag, Color, Promoter, EventDance, EventPromoter#, Storyline, Event, CastmemberColor, Castmember, User, EventChar
+from danceapp.models import Event, EventTag, Venue, User, Dance, Tag, Color, Promoter, EventDance, EventPromoter, UserPromoter#, Storyline, Event, CastmemberColor, Castmember, User, EventChar
 import datetime
 
 
 def create_dance_types():
     dt1= Dance('Salsa')
+    db.session.add(dt1)
+    db.session.commit()
     tag1 = Tag(name="On1",dance_id= dt1.id, color= Color.GREY)
     tag2 = Tag(name="On2", dance_id= dt1.id, color= Color.GREY)
     tag3 = Tag(name="Cuban", dance_id= dt1.id, color= Color.GREY)
-    db.session.add(dt1)
     db.session.add(tag1)
     db.session.add(tag2)
     db.session.add(tag3)
 
 
     dt2= Dance('Bachata')
+    db.session.add(dt2)
+    db.session.commit()
     tag4 = Tag(name="Dominican",dance_id= dt2.id, color= Color.GREY)
     tag5 = Tag(name="Sensual",dance_id= dt2.id, color= Color.GREY)
     tag6 = Tag(name="Moderna",dance_id= dt2.id, color= Color.GREY)
     tag7 = Tag(name="Traditional",dance_id= dt2.id, color= Color.GREY)
-    db.session.add(dt2)
     db.session.add(tag4)
     db.session.add(tag5)
     db.session.add(tag6)
     db.session.add(tag7)
 
     dt3= Dance('Kizomba')
+    db.session.add(dt3)
+    db.session.commit()
     tag8 = Tag(name="Urban",dance_id= dt3.id, color= Color.GREY)
     tag9 = Tag(name="Traditional",dance_id= dt3.id, color= Color.GREY)
-    db.session.add(dt3)
     db.session.add(tag8)
     db.session.add(tag9)
 
@@ -77,10 +80,16 @@ def crete_venues():
 def create_user():
     u = User(username="default", password="password", email="default", is_admin=False,is_promoter=False)
     db.session.add(u)
-    u = User(username="promoter", password="password", email="promoter", is_admin=False,is_promoter=True)
-    db.session.add(u)
     u = User(username="admin", password="password", email="admin", is_admin=True,is_promoter=False)
     db.session.add(u)
+
+    u = User(username="promoter", password="password", email="promoter", is_admin=False,is_promoter=True)
+    db.session.add(u)
+    db.session.commit()
+    promoters = Promoter.query.all()
+    for p in promoters:
+        ep = UserPromoter(p.id,u.id)
+        db.session.add(ep)
     db.session.commit()
 
 
@@ -97,8 +106,8 @@ def link_event_tag():
 
 def run_seed():
     print("Creating default user")
-    create_user()
     create_defaults()
+    create_user()
 
 def create_defaults():
     print("creating dances and tags")

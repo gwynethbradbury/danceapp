@@ -19,3 +19,7 @@ def is_current_page(current_path):
 @app.template_filter('human')
 def str_to_title(str_val):
     return str_val.title()
+
+@app.template_filter('nextdate')
+def eventnextdate(event):
+    return event.getNextDate()
