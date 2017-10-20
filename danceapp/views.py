@@ -152,12 +152,16 @@ def new_event():
 
         for d in dances:
             if d.possibletags.count():
+                c = 0
                 for t in d.possibletags:
-                    x=(request.form.get(str(d.id)+'_'+str(t.id)) == str(t.id))
-                    y=( t in event.tags)
-                    if not x==y:
-                        set_tag(event.id,t.id)
-                        set_genre(event.id,t.dance.id)
+                    x = (request.form.get(str(d.id) + '_' + str(t.id)) == str(t.id))
+                    y = (t in event.tags)
+                    if not x == y:
+                        set_tag(event_id, t.id)
+                    if x:
+                        c = c + 1
+                if c > 0:
+                    set_genre(event_id, t.dance.id)
             else:
                 x=(request.form.get(str(d.id)+'_') == 'genre')
                 y=(d in event.dances)
@@ -206,12 +210,16 @@ def event(event_id):
 
             for d in dances:
                 if d.possibletags.count():
+                    c=0
                     for t in d.possibletags:
                         x=(request.form.get(str(d.id)+'_'+str(t.id)) == str(t.id))
                         y=( t in event.tags)
                         if not x==y:
                             set_tag(event_id,t.id)
-                            set_genre(event_id,t.dance.id)
+                        if x:
+                            c=c+1
+                    if c>0:
+                        set_genre(event_id,t.dance.id)
                 else:
                     x=(request.form.get(str(d.id)+'_') == 'genre')
                     y=(d in event.dances)
