@@ -23,9 +23,11 @@ else:
                 dbconfig.db_name)
 
 
-UPLOAD_FOLDER = 'danceapp/static'
+UPLOAD_FOLDER = 'danceapp/static/flyers'
+SERVE_FOLDER = 'static/flyers'
 ALLOWED_EXTENSIONS = set([ 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['SERVE_FOLDER'] = SERVE_FOLDER
 
 app.secret_key = 'super secret key'
 app.config['SESSION_TYPE'] = 'filesystem'

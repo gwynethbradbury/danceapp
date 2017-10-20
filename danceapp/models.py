@@ -332,5 +332,12 @@ class User(db.Model):
     def is_promoter_user(self):
         return self.is_promoter
 
+    def is_valid_promoter_for(self,event):
+        for p in self.promotesfor:
+            if p in event.promoters:
+                return True
+        return False
+
+
     def __repr__(self):
         return '<User %r>' % (self.username)

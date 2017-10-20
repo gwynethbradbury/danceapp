@@ -121,7 +121,8 @@ def new_promoter():
 
 @app.route('/events/new', methods=['POST', 'GET'])
 def new_event():
-    pass
+    dances = Dance.query.all()
+
     if request.method == 'POST':
         event = Event(title=request.form.get('title'),
                     description=request.form.get('description'),
@@ -135,6 +136,7 @@ def new_event():
             event.status=3
         else:
             event.status=1
+
 
         # check if the post request has the file part
         if 'file' not in request.files:
@@ -152,11 +154,26 @@ def new_event():
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 # return redirect(url_for('uploaded_file',
                 #                         filename=filename))
-                event.flyerlink= os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                event.flyerlink= os.path.join(app.config['SERVE_FOLDER'], filename)
 
         db.session.add(event)
         db.session.commit()
         ep = EventPromoter(request.form.get('promoter_id'),event.id)
+
+        for d in dances:
+            if d.possibletags.count():
+                for t in d.possibletags:
+                    x=(request.form.get(str(d.id)+'_'+str(t.id)) == str(t.id))
+                    y=( t in event.tags)
+                    if not x==y:
+                        set_tag(event_id,t.id)
+                        set_genre(event_id,t.dance.id)
+            else:
+                x=(request.form.get(str(d.id)+'_') == 'genre')
+                y=(d in event.dances)
+                if not x==y:
+                    set_genre(event.id,d.id)
+
 
         db.session.add(ep)
         db.session.commit()
@@ -165,7 +182,8 @@ def new_event():
     else:
         venues = Venue.query.all()
         promoters = Promoter.query.all()
-        return render_template('event/new.html', promoters=promoters, venues = venues)
+
+        return render_template('event/new.html', promoters=promoters, venues = venues, dances=dances)
 
 
 from . import ALLOWED_EXTENSIONS
@@ -210,23 +228,23 @@ def event(event_id):
                     if not x==y:
                         set_genre(event_id,d.id)
 
-                # check if the post request has the file part
-                if 'file' not in request.files:
-                    flash('No file part')
+            # check if the post request has the file part
+            if 'file' not in request.files:
+                flash('No file part')
+                # return redirect(request.url)
+            else:
+                file = request.files['file']
+                # if user does not select file, browser also
+                # submit a empty part without filename
+                if file.filename == '':
+                    flash('No selected file')
                     # return redirect(request.url)
-                else:
-                    file = request.files['file']
-                    # if user does not select file, browser also
-                    # submit a empty part without filename
-                    if file.filename == '':
-                        flash('No selected file')
-                        # return redirect(request.url)
-                    if file and allowed_file(file.filename):
-                        filename = secure_filename(file.filename)
-                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                        # return redirect(url_for('uploaded_file',
-                        #                         filename=filename))
-                        event.flyerlink = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                    # return redirect(url_for('uploaded_file',
+                    #                         filename=filename))
+                    event.flyerlink = os.path.join(app.config['SERVE_FOLDER'], filename)
 
             db.session.add(event)
             db.session.commit()
@@ -304,40 +322,15 @@ def set_tag(event_id, tag_id):
     db.session.commit()
 
 
-
-# region SET OWNER
-#
-#
-# @app.route('/events/<int:event_id>/set_castmember/<cast_id>')
-# def set_castmember(event_id, cast_id):
-#     event = Event.query.get_or_404(event_id)
-#     if not event.user_id == current_user.id:
-#         abort(404)
-#     try:
-#         eventchars_count = EventChar.query.filter_by(castmember_id=cast_id, event_id=event_id).count()
-#         if eventchars_count>0:
-#             ECList = EventChar.query.filter_by(castmember_id=cast_id, event_id=event_id).all()
-#             for e in ECList:
-#                 db.session.delete(e)
-#         else:
-#             EC = EventChar(castmember_id=cast_id,event_id=event_id)
-#             db.session.add(EC)
-#     except KeyError:
-#         abort(400)
-#
-#     db.session.commit()
-#     return redirect('/events/{}'.format(event_id))
-#
-# # endregion
-#
 @app.route('/events/<int:event_id>', methods=['DELETE'])
 def delete_event(event_id):
     event = Event.query.get_or_404(event_id)
-    if not event.user_id == current_user.id:
-        abort(404)
-    db.session.delete(event)
-    db.session.commit()
-    return url_for('event')
+    if current_user.is_authenticated():
+        cu = User.query.get_or_404(current_user.id)
+        if cu.is_admin or (cu.is_promoter and cu.is_valid_promoter_for(event)):
+            db.session.delete(event)
+            db.session.commit()
+    return url_for('events')
 
 # @app.route('/events/<int:event_id>')
 # def unassign_castmember(event_id):

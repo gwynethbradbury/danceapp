@@ -98,9 +98,23 @@
         </div>
 <br/>
 <br/>
-                    <div class="form-group">
-                        <input type=file name=file>
-                    </div>
+        <div class="form-group" id="tagging">
+            {% for d in dances %}
+                <p>{{ d.name }}:
+                {% if d.hastags() %}<br/>
+                    {% for g in d.possibletags %}
+                        <input type="checkbox" name="{{ d.id }}_{{ g.id }}" value="{{ g.id }}" /> {{ g.name }}
+                    {% endfor %} <br/>
+                {% else %}
+                    <input type="checkbox" name="{{ d.id }}_" value="genre" />
+                {% endif %}
+                    </p>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <input type=file name=file>
+        </div>
 
         <button type="submit" class="btn btn-primary">Create it!</button>
     </form>
