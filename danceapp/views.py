@@ -138,6 +138,9 @@ def new_event():
             event.status=1
 
 
+        db.session.add(event)
+        db.session.commit()
+
         # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
@@ -151,10 +154,12 @@ def new_event():
                 # return redirect(request.url)
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                if not os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], str(event.id))):
+                    os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], str(event.id)))
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], str(event.id),filename))
                 # return redirect(url_for('uploaded_file',
                 #                         filename=filename))
-                event.flyerlink= os.path.join(app.config['SERVE_FOLDER'], filename)
+                event.flyerlink= os.path.join(app.config['SERVE_FOLDER'], str(event.id),filename)
 
         db.session.add(event)
         db.session.commit()
@@ -241,10 +246,12 @@ def event(event_id):
                     # return redirect(request.url)
                 if file and allowed_file(file.filename):
                     filename = secure_filename(file.filename)
-                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                    if not os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], str(event.id))):
+                        os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], str(event.id)))
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], str(event.id),filename))
                     # return redirect(url_for('uploaded_file',
                     #                         filename=filename))
-                    event.flyerlink = os.path.join(app.config['SERVE_FOLDER'], filename)
+                    event.flyerlink = os.path.join(app.config['SERVE_FOLDER'], str(event.id),filename)
 
             db.session.add(event)
             db.session.commit()
@@ -332,30 +339,6 @@ def delete_event(event_id):
             db.session.commit()
     return url_for('events')
 
-# @app.route('/events/<int:event_id>')
-# def unassign_castmember(event_id):
-#     event = Event.query.get_or_404(event_id)
-#     if not event.user_id == current_user.id:
-#         abort(404)
-#     try:
-#         castmember = Event.query.filter_by(initials="U",user_id=current_user.id).all()
-#         if len(castmember)==0: abort(404)
-#         event.castmember_id = castmember[0].id
-#     except KeyError:
-#         abort(400)
-#
-#     db.session.add(event)
-#     db.session.commit()
-#     return redirect('/events/{}'.format(event_id))
-#
-# @app.route('/storylines/<int:storyline_id>', methods=['DELETE'])
-# def delete_storyline(storyline_id):
-#     storyline = Storyline.query.get_or_404(storyline_id)
-#     if not storyline.user_id == current_user.id:
-#         abort(404)
-#     db.session.delete(storyline)
-#     db.session.commit()
-#     return url_for('storylines')
 
 @app.route('/tags/new', methods=['POST', 'GET'])
 def new_tag():

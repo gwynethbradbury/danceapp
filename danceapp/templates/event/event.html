@@ -59,8 +59,13 @@
 
 <div class="container">
     <div class="page-header">
-        <h1>{{ event.title }}</h1>
-        {% for d in event.dances %}{{ d.name }} {% endfor %}
+        <h1 style="display: inline;">{{ event.title }}</h1>
+        {% if current_user.is_authenticated %}
+            {% if current_user.is_admin_user() or current_user.is_promoter_user() %}
+                <a href="{{ url_for('delete_event', event_id=event.id) }}" id="delete-event" class="btn btn-link"><span class="glyphicon glyphicon-trash"></span>Remove</a>
+            {% endif %}
+        {% endif %}<br/>
+        {% for d in event.dances %}<a href="#" class="btn btn-primary">{{ d.name }}</a> {% endfor %}
     </div>
 
     <div class="row">
@@ -172,25 +177,25 @@
 {#        #}
 {#        #}
 
-            {% if current_user.is_authenticated %}
-                {% if current_user.is_admin_user() or current_user.is_promoter_user() %}
-                    <p>Set Status:</p>
-                    <div class="btn-group btn-group-vertical" role="group">
-                    {% for d in dances %}
-                        <a href="{{ url_for('toggle_genre', event_id=event.id, genre_id=d.id) }}" class="btn btn-warning">{{ d.name }}</a>
-                        {% for g in d.possibletags %}
-                            <a href="{{ url_for('toggle_tag', event_id=event.id, tag_id=g.id) }}" class="btn btn-warning">{{ g.name }}</a>
-                        {% endfor %}
-                    {% endfor %}
+            <!--{% if current_user.is_authenticated %}-->
+                <!--{% if current_user.is_admin_user() or current_user.is_promoter_user() %}-->
+                    <!--<p>Set Status:</p>-->
+                    <!--<div class="btn-group btn-group-vertical" role="group">-->
+                    <!--{% for d in dances %}-->
+                        <!--<a href="{{ url_for('toggle_genre', event_id=event.id, genre_id=d.id) }}" class="btn btn-warning">{{ d.name }}</a>-->
+                        <!--{% for g in d.possibletags %}-->
+                            <!--<a href="{{ url_for('toggle_tag', event_id=event.id, tag_id=g.id) }}" class="btn btn-warning">{{ g.name }}</a>-->
+                        <!--{% endfor %}-->
+                    <!--{% endfor %}-->
 
-                        <a href="{{ url_for('set_status', event_id=event.id, status='repeat_reg') }}" class="btn btn-primary">Regularly repeating</a>
-                        <a href="{{ url_for('set_status', event_id=event.id, status='repeat_strange') }}" class="btn btn-success">Irregular</a>
-        {#            </div>#}
-        {#            <div class="btn-group btn-group-vertical" role="group">#}
-                        <a href="{{ url_for('delete_event', event_id=event.id) }}" id="delete-event" class="btn btn-link"><span class="glyphicon glyphicon-trash"></span>Remove</a>
-                    </div>
-            {% endif %}
-            {% endif %}
+                        <!--<a href="{{ url_for('set_status', event_id=event.id, status='repeat_reg') }}" class="btn btn-primary">Regularly repeating</a>-->
+                        <!--<a href="{{ url_for('set_status', event_id=event.id, status='repeat_strange') }}" class="btn btn-success">Irregular</a>-->
+        <!--{#            </div>#}-->
+        <!--{#            <div class="btn-group btn-group-vertical" role="group">#}-->
+                        <!--<a href="{{ url_for('delete_event', event_id=event.id) }}" id="delete-event" class="btn btn-link"><span class="glyphicon glyphicon-trash"></span>Remove</a>-->
+                    <!--</div>-->
+            <!--{% endif %}-->
+            <!--{% endif %}-->
         </div>
     </div>
 </div>

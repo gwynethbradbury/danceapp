@@ -43,10 +43,10 @@ def create_dance_types():
 
 
 def create_promoters():
-    promo1 = Promoter(name="Oxford University Salsa Society")
-    # promo2 = Promoter(name="Unnamed promo2")
+    promo1 = Promoter(name="Unnamed promo")
+    promo2 = Promoter(name="Unnamed promo2")
     db.session.add(promo1)
-    # db.session.add(promo2)
+    db.session.add(promo2)
     db.session.commit()
 
 def create_events():
@@ -71,16 +71,10 @@ def create_events():
     db.session.commit()
 
 def crete_venues():
-    venue0 = Venue("Anuba",51.752817, -1.265868)
-    venue1 = Venue("Wesley Memorial Church",51.752994, -1.260758)
-    venue2 = Venue("St Columba's Church Hall",51.751752, -1.255746)
-    venue3 = Venue("Wadham College, Old Refectory",51.755718, -1.254721)
-    venue4 = Venue("Green Templeton College Bar",51.760832, -1.263126)
+    venue0 = Venue(name="Unnamed")
+    venue1 = Venue(name="Unnamed2")
     db.session.add(venue0)
     db.session.add(venue1)
-    db.session.add(venue2)
-    db.session.add(venue3)
-    db.session.add(venue4)
     db.session.commit()
 
 def create_user():
@@ -125,8 +119,8 @@ def create_defaults():
     print("creating promoters")
     create_promoters()
 
-    # print("creating events")
-    # create_events()
+    print("creating events")
+    create_events()
 
     print("Adding tag to event ...")
     link_event_tag()
