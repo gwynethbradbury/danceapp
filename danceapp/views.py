@@ -5,6 +5,9 @@ from danceapp.models import *
 from danceapp.signals import event_created, venue_created, promoter_created
 
 from flask_login import current_user
+from werkzeug.utils import secure_filename
+import os
+
 @app.route('/')
 def index():
     return render_template('home.html')
@@ -133,6 +136,24 @@ def new_event():
         else:
             event.status=1
 
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            # return redirect(request.url)
+        else:
+            file = request.files['file']
+            # if user does not select file, browser also
+            # submit a empty part without filename
+            if file.filename == '':
+                flash('No selected file')
+                # return redirect(request.url)
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                # return redirect(url_for('uploaded_file',
+                #                         filename=filename))
+                event.flyerlink= os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
         db.session.add(event)
         db.session.commit()
         ep = EventPromoter(request.form.get('promoter_id'),event.id)
@@ -145,6 +166,12 @@ def new_event():
         venues = Venue.query.all()
         promoters = Promoter.query.all()
         return render_template('event/new.html', promoters=promoters, venues = venues)
+
+
+from . import ALLOWED_EXTENSIONS
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/events/<int:event_id>', methods=['POST', 'GET'])
 def event(event_id):
@@ -183,7 +210,23 @@ def event(event_id):
                     if not x==y:
                         set_genre(event_id,d.id)
 
-
+                # check if the post request has the file part
+                if 'file' not in request.files:
+                    flash('No file part')
+                    # return redirect(request.url)
+                else:
+                    file = request.files['file']
+                    # if user does not select file, browser also
+                    # submit a empty part without filename
+                    if file.filename == '':
+                        flash('No selected file')
+                        # return redirect(request.url)
+                    if file and allowed_file(file.filename):
+                        filename = secure_filename(file.filename)
+                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                        # return redirect(url_for('uploaded_file',
+                        #                         filename=filename))
+                        event.flyerlink = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
             db.session.add(event)
             db.session.commit()

@@ -4,3 +4,4 @@ dbconfig.py
 .idea
 .idea/*
 migrations
+danceapp/static/flyers/*

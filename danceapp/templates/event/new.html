@@ -37,7 +37,7 @@
         <h1>New Event</h1>
     </div>
 
-    <form method="POST">
+    <form method="POST" enctype=multipart/form-data>
         <div class="form-group">
             <input name="title" type="text" class="form-control" placeholder="Name of the event" required>
         </div>
@@ -57,9 +57,15 @@
         <div class="form-group">
             <select class="form-control" name="promoter_id">
                 <option value="-1">Select a Promoter</option>
-                {% for promoter in current_user.promotesfor %}
-                    <option value="{{ promoter.id }}" {{ promoter.id | is_selected }}>{{ promoter.name }}</option>
-                {% endfor %}
+                {% if current_user.is_admin_user() %}
+                    {% for promoter in promoters %}
+                        <option value="{{ promoter.id }}" {{ promoter.id | is_selected }}>{{ promoter.name }}</option>
+                    {% endfor %}
+                {% else %}
+                    {% for promoter in current_user.promotesfor %}
+                        <option value="{{ promoter.id }}" {{ promoter.id | is_selected }}>{{ promoter.name }}</option>
+                    {% endfor %}
+                {% endif %}
             </select>
         </div>
 
@@ -92,8 +98,9 @@
         </div>
 <br/>
 <br/>
-
-
+                    <div class="form-group">
+                        <input type=file name=file>
+                    </div>
 
         <button type="submit" class="btn btn-primary">Create it!</button>
     </form>

@@ -10,7 +10,8 @@
                     <a href="{{ url_for('event', event_id=event.id) }}" class="list-group-item " style="min-width:300px;">
                     {%  for d in event.dances %}<button class="btn btn-warning">{{ d.name }}</button>{% endfor %}
 {#                    <a href="{{ url_for('event', event_id=event.id) }}" class="list-group-item  {{ promoter.style() }}" style="width:300px;">#}
-            <img src="http://via.placeholder.com/300x420" style="min-width: 300px;"/>
+                    <img src="/static/{{ event.flyerlink }}" style="max-width: 100%;"/>
+            <!--<img src="http://via.placeholder.com/300x420" style="min-width: 300px;"/>-->
                     <h5>{{ event.getNextDate()}}</h5>
                     <h4 class="list-group-item-heading">{{ event.title }}</h4>
                     <p class="list-group-item-text">{{ event.description[:100] }}{% if event.description|length>500 %}...{% endif %}</p>

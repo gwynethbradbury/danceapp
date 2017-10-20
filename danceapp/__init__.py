@@ -3,6 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
 import dbconfig
+from werkzeug.utils import secure_filename
+
+
+
 
 app = Flask(__name__)
 
@@ -19,6 +23,9 @@ else:
                 dbconfig.db_name)
 
 
+UPLOAD_FOLDER = 'danceapp/static'
+ALLOWED_EXTENSIONS = set([ 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 app.secret_key = 'super secret key'
 app.config['SESSION_TYPE'] = 'filesystem'

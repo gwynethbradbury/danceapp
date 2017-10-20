@@ -132,6 +132,7 @@ class Event(db.Model):
                         secondary=EventDance.__table__,
                         backref="danceevents")
 
+    flyerlink = db.Column(db.String(100))
 
     def get_next_date(self):
         if self.status==1:
