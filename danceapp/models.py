@@ -40,6 +40,8 @@ class TagColor(Enum):
     DARKGREY=11
 
 
+
+
 class EventTag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     tag_id = db.Column(db.Integer, db.ForeignKey('tag.id'))
