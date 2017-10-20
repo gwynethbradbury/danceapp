@@ -157,11 +157,11 @@ def new_event():
                     x = (request.form.get(str(d.id) + '_' + str(t.id)) == str(t.id))
                     y = (t in event.tags)
                     if not x == y:
-                        set_tag(event_id, t.id)
+                        set_tag(event.id, t.id)
                     if x:
                         c = c + 1
                 if c > 0:
-                    set_genre(event_id, t.dance.id)
+                    set_genre(event.id, t.dance.id)
             else:
                 x=(request.form.get(str(d.id)+'_') == 'genre')
                 y=(d in event.dances)
