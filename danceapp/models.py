@@ -1,4 +1,5 @@
-from danceapp import db
+import os
+from danceapp import app, db
 from danceapp import bcrypt
 
 from enum import Enum
@@ -7,7 +8,12 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 
 import datetime
+from werkzeug.utils import secure_filename
 
+from . import ALLOWED_EXTENSIONS
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 class Status(Enum):
     ONE_OFF = 1
@@ -165,6 +171,22 @@ class Event(db.Model):
         else:
             return self.date
 
+    def setFlyerLink(self,file):
+        msg=''
+        # if user does not select file, browser also
+        # submit a empty part without filename
+        if file.filename == '':
+            msg = ('No selected file')
+            # return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            if not os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], str(self.id))):
+                os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], str(self.id)))
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], str(self.id), filename))
+            # return redirect(url_for('uploaded_file',
+            #                         filename=filename))
+            self.flyerlink = os.path.join(app.config['SERVE_FOLDER'], str(self.id), filename)
+        return msg
 
 class Promoter(db.Model):
     id = db.Column(db.Integer, primary_key=True)

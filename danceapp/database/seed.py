@@ -107,6 +107,14 @@ def link_event_tag():
         db.session.add(te)
     db.session.commit()
 
+def link_user_promoter():
+    t = Promoter.query.first()
+    es = User.query.all()
+    for e in es:
+        te = UserPromoter(t.id,e.id)
+        db.session.add(te)
+    db.session.commit()
+
 
 
 
@@ -114,6 +122,8 @@ def run_seed():
     print("Creating default user")
     create_defaults()
     create_user()
+    print("Adding promoter to user ...")
+    link_user_promoter()
 
 def create_defaults():
     print("creating dances and tags")
@@ -130,5 +140,6 @@ def create_defaults():
 
     print("Adding tag to event ...")
     link_event_tag()
+
 
     return

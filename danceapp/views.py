@@ -5,7 +5,6 @@ from danceapp.models import *
 from danceapp.signals import event_created, venue_created, promoter_created
 
 from flask_login import current_user
-from werkzeug.utils import secure_filename
 import os
 
 @app.route('/')
@@ -147,23 +146,9 @@ def new_event():
             # return redirect(request.url)
         else:
             file = request.files['file']
-            # if user does not select file, browser also
-            # submit a empty part without filename
-            if file.filename == '':
-                flash('No selected file')
-                # return redirect(request.url)
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                if not os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], str(event.id))):
-                    os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], str(event.id)))
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], str(event.id),filename))
-                # return redirect(url_for('uploaded_file',
-                #                         filename=filename))
-                event.flyerlink= os.path.join(app.config['SERVE_FOLDER'], str(event.id),filename)
-
-        db.session.add(event)
-        db.session.commit()
-        ep = EventPromoter(request.form.get('promoter_id'),event.id)
+            msg = event.setFlyerLink(file)
+            if not msg=='':
+                flash(msg)
 
         for d in dances:
             if d.possibletags.count():
@@ -171,8 +156,8 @@ def new_event():
                     x=(request.form.get(str(d.id)+'_'+str(t.id)) == str(t.id))
                     y=( t in event.tags)
                     if not x==y:
-                        set_tag(event_id,t.id)
-                        set_genre(event_id,t.dance.id)
+                        set_tag(event.id,t.id)
+                        set_genre(event.id,t.dance.id)
             else:
                 x=(request.form.get(str(d.id)+'_') == 'genre')
                 y=(d in event.dances)
@@ -180,6 +165,10 @@ def new_event():
                     set_genre(event.id,d.id)
 
 
+        db.session.add(event)
+        db.session.commit()
+
+        ep = EventPromoter(request.form.get('promoter_id'),event.id)
         db.session.add(ep)
         db.session.commit()
         event_created.send(event)
@@ -191,10 +180,6 @@ def new_event():
         return render_template('event/new.html', promoters=promoters, venues = venues, dances=dances)
 
 
-from . import ALLOWED_EXTENSIONS
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/events/<int:event_id>', methods=['POST', 'GET'])
 def event(event_id):
@@ -239,19 +224,9 @@ def event(event_id):
                 # return redirect(request.url)
             else:
                 file = request.files['file']
-                # if user does not select file, browser also
-                # submit a empty part without filename
-                if file.filename == '':
-                    flash('No selected file')
-                    # return redirect(request.url)
-                if file and allowed_file(file.filename):
-                    filename = secure_filename(file.filename)
-                    if not os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], str(event.id))):
-                        os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], str(event.id)))
-                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], str(event.id),filename))
-                    # return redirect(url_for('uploaded_file',
-                    #                         filename=filename))
-                    event.flyerlink = os.path.join(app.config['SERVE_FOLDER'], str(event.id),filename)
+                msg=event.setFlyerLink(file)
+                if not msg=='':
+                    flash(msg)
 
             db.session.add(event)
             db.session.commit()
